@@ -13,14 +13,12 @@ const Home = () => {
 
   function createProject(e) {
     e.preventDefault();
-    console.log({ projectName });
 
     axios
       .post("/projects/create", {
         name: projectName,
       })
       .then((res) => {
-        console.log(res);
         setIsModalOpen(false);
       })
       .catch((error) => {
@@ -36,7 +34,6 @@ const Home = () => {
     axios
       .delete(`/projects/${id}`)
       .then((res) => {
-        console.log(res);
         setProject((prevProjects) => prevProjects.filter((p) => p._id !== id)); // Properly update the state
       })
       .catch((error) => console.log(error));

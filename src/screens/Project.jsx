@@ -43,7 +43,6 @@ const Project = () => {
         users: Array.from(selectedUserId),
       })
       .then((res) => {
-        console.log(res.data);
         setIsModalOpen(false);
       })
       .catch((err) => {
@@ -64,15 +63,12 @@ const Project = () => {
 
     // Handle real-time project messages
     const handleProjectMessage = (data) => {
-      console.log("New message received:", data);
-
       try {
         if (data.sender._id === "ai") {
           let message;
 
           try {
             message = JSON.parse(data.message);
-            console.log("AI-generated message:", message);
           } catch (jsonError) {
             console.error("Failed to parse JSON:", jsonError);
             console.error("Problematic data:", data.message);
@@ -109,7 +105,6 @@ const Project = () => {
     axios
       .get(`/projects/get-project/${location.state.project._id}`)
       .then((res) => {
-        console.log("Project data:", res.data.project);
         setProject(res.data.project);
         setFileTree(res.data.project.fileTree || {});
       })
@@ -158,9 +153,7 @@ const Project = () => {
         projectId: project._id,
         fileTree: ft,
       })
-      .then((res) => {
-        console.log(res.data);
-      })
+      .then((res) => {})
       .catch((err) => {
         console.log(err);
       });

@@ -8,7 +8,6 @@ function RunJSButton({
   setShowTerminal,
 }) {
   const [isRunning, setIsRunning] = useState(false);
-  const [iframeUrl, setIframeUrl] = useState("");
 
   return (
     <div>

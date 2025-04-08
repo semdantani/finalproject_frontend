@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-function Terminal({ output }) {
+function Terminal({ output, setShowTerminal }) {
   const terminalRef = useRef(null);
-  const [height, setHeight] = useState(200); // Default terminal height
-  const [isVisible, setIsVisible] = useState(true); // Track terminal visibility
+  const [height, setHeight] = useState(200);
   const isDragging = useRef(false);
   const startY = useRef(0);
   const startHeight = useRef(200);
@@ -14,7 +13,6 @@ function Terminal({ output }) {
     }
   }, [output]);
 
-  // Start resizing when mouse is pressed on the resizer
   const startResizing = (e) => {
     e.preventDefault();
     isDragging.current = true;
@@ -25,22 +23,19 @@ function Terminal({ output }) {
     document.addEventListener("mouseup", stopResizing);
   };
 
-  // Adjust height dynamically while dragging
   const resize = (e) => {
     if (isDragging.current) {
-      const deltaY = startY.current - e.clientY; // Invert movement
-      setHeight(Math.max(100, startHeight.current + deltaY)); // Prevent shrinking too much
+      const deltaY = startY.current - e.clientY;
+      setHeight(Math.max(100, startHeight.current + deltaY));
     }
   };
 
-  // Stop resizing when mouse is released
   const stopResizing = () => {
     isDragging.current = false;
     document.removeEventListener("mousemove", resize);
     document.removeEventListener("mouseup", stopResizing);
   };
 
-  // Function to make links clickable in output
   const renderOutput = (text) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.split(urlRegex).map((part, index) =>
@@ -62,59 +57,55 @@ function Terminal({ output }) {
 
   return (
     <div style={{ width: "100%", position: "relative" }}>
-      {/* Close/Show Terminal Button */}
-      <button
-        onClick={() => setIsVisible(!isVisible)}
+      <div
+        ref={terminalRef}
         style={{
-          position: "absolute",
-          top: "-35px",
-          right: "10px",
-          padding: "6px 12px",
-          backgroundColor: isVisible ? "#d9534f" : "#5cb85c",
+          width: "100%",
+          height: `${height}px`,
+          backgroundColor: "#1e1e1e",
           color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontWeight: "bold",
+          padding: "10px",
+          overflowY: "auto",
+          fontFamily: "monospace",
+          borderTop: "2px solid #444",
+          position: "relative",
         }}
       >
-        {isVisible ? "✖ Hide Terminal" : "🖥 Show Terminal"}
-      </button>
-
-      {isVisible && (
-        <div
-          ref={terminalRef}
+        {/* Close Button (calls parent to hide) */}
+        <button
+          onClick={() => setShowTerminal(false)}
           style={{
-            width: "100%",
-            height: `${height}px`,
-            backgroundColor: "#1e1e1e",
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            padding: "4px 10px",
+            backgroundColor: "#d9534f",
             color: "white",
-            padding: "10px",
-            overflowY: "auto",
-            fontFamily: "monospace",
-            borderTop: "2px solid #444",
-            position: "relative",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
-          {/* Resizer Handle */}
-          <div
-            onMouseDown={startResizing}
-            style={{
-              height: "5px",
-              cursor: "ns-resize",
-              background: "#444",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-            }}
-          />
-          <h4 style={{ margin: "0 0 10px 0", color: "#4CAF50" }}>Terminal</h4>
-          <pre>
-            {renderOutput(output || "Press Run to execute your code...")}
-          </pre>
-        </div>
-      )}
+          ✖
+        </button>
+
+        {/* Resizer */}
+        <div
+          onMouseDown={startResizing}
+          style={{
+            height: "5px",
+            cursor: "ns-resize",
+            background: "#444",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+          }}
+        />
+        <h4 style={{ margin: "0 0 10px 0", color: "#4CAF50" }}>Terminal</h4>
+        <pre>{renderOutput(output || "Press Run to execute your code...")}</pre>
+      </div>
     </div>
   );
 }

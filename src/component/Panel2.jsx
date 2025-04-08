@@ -1,6 +1,5 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { sendMessage } from "../config/socket";
 import CodeReviewPanel from "./CodeReviewPanel";
 import Editor from "@monaco-editor/react";
 import FileExplorer from "./FileExplorer";
@@ -216,7 +215,9 @@ const Panel2 = ({
             </div>
           )}
         </div>
-        {showTerminal && <Terminal output={output} />}
+        {showTerminal && (
+          <Terminal output={output} setShowTerminal={setShowTerminal} />
+        )}
       </div>
 
       {/* Output Panel (Responsive) */}
