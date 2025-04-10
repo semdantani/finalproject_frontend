@@ -5,6 +5,8 @@ const FileExplorer = ({
   setFileTree,
   setCurrentFile,
   setOpenFiles,
+  currentFile,
+  openFiles,
 }) => {
   const [newFileName, setNewFileName] = useState("");
 
