@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { sendMessage } from "../config/socket";
 
 const FileExplorer = ({
   fileTree,
