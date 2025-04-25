@@ -12,7 +12,7 @@ const FileExplorer = ({
   const [newFileName, setNewFileName] = useState("");
 
   const isValidFileName = (name) => {
-    const invalidChars = /[<>:"\/\\|?*\x00-\x1F]/g; // Invalid characters (like VS Code)
+    const invalidChars = /[<>:"\/\\|?*\x00-\x1F]/g;
     return !invalidChars.test(name) && name.includes(".");
   };
 
@@ -26,7 +26,7 @@ const FileExplorer = ({
 
     if (!isValidFileName(trimmedFileName)) {
       alert(
-        "Invalid file name! Avoid special characters like !@#$%^&* and include an extension."
+        "Invalid file name! Avoid special characters and include an extension."
       );
       return;
     }
@@ -38,25 +38,28 @@ const FileExplorer = ({
 
     setFileTree((prevTree) => ({
       ...prevTree,
-      [trimmedFileName]: { file: { contents: "" } }, // Create file with empty content
+      [trimmedFileName]: { file: { contents: "" } },
     }));
 
-    setNewFileName(""); // Clear input field
+    setNewFileName("");
   };
 
   const deleteFile = (fileToDelete) => {
     setOpenFiles((prevFiles) =>
-      prevFiles.includes(file) ? prevFiles : [...prevFiles, file]
+      prevFiles.filter((file) => file !== fileToDelete)
     );
 
     setFileTree((prevTree) => {
       const updatedTree = { ...prevTree };
-      delete updatedTree[fileToDelete]; // Remove file from fileTree
+      delete updatedTree[fileToDelete];
       return updatedTree;
     });
+
     sendMessage("delete-file", { fileName: fileToDelete });
+
     if (currentFile === fileToDelete) {
-      setCurrentFile(openFiles.length > 1 ? openFiles[0] : null); // Switch to another file if the current one is deleted
+      const remainingFiles = openFiles.filter((f) => f !== fileToDelete);
+      setCurrentFile(remainingFiles.length > 0 ? remainingFiles[0] : null);
     }
   };
 
@@ -72,13 +75,15 @@ const FileExplorer = ({
             <button
               onClick={() => {
                 setCurrentFile(file);
-                setOpenFiles((prevFiles) => new Set([...prevFiles, file]));
+                setOpenFiles((prevFiles) =>
+                  prevFiles.includes(file) ? prevFiles : [...prevFiles, file]
+                );
               }}
               className="tree-element cursor-pointer p-2 px-4 flex items-center gap-2 bg-white w-full border rounded-md shadow-sm transition-all duration-200 hover:bg-green-100 hover:shadow-md active:scale-95"
             >
               <span
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent file selection on delete click
+                  e.stopPropagation();
                   deleteFile(file);
                 }}
                 className="text-red-500 hover:text-red-700 cursor-pointer"
@@ -101,7 +106,7 @@ const FileExplorer = ({
         ))}
       </div>
 
-      {/* Create File Input (Moved to Bottom) */}
+      {/* Create File Input */}
       <div className="p-2 flex flex-wrap items-center gap-2 border-t bg-white">
         <input
           type="text"
@@ -115,7 +120,7 @@ const FileExplorer = ({
           style={{
             backgroundColor: "rgb(18, 140, 126)",
           }}
-          className="bg--500 text-white px-3 py-2 rounded-md"
+          className="text-white px-3 py-2 rounded-md"
         >
           Create
         </button>
