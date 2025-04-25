@@ -7,12 +7,14 @@ function Terminal({ output, setShowTerminal }) {
   const startY = useRef(0);
   const startHeight = useRef(200);
 
+  // Scroll terminal to the bottom every time new output is added
   useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, [output]);
 
+  // Start resizing the terminal
   const startResizing = (e) => {
     e.preventDefault();
     isDragging.current = true;
@@ -23,25 +25,28 @@ function Terminal({ output, setShowTerminal }) {
     document.addEventListener("mouseup", stopResizing);
   };
 
+  // Handle resizing logic
   const resize = (e) => {
     if (isDragging.current) {
       const deltaY = startY.current - e.clientY;
-      setHeight(Math.max(100, startHeight.current + deltaY));
+      setHeight(Math.max(100, startHeight.current + deltaY)); // Prevent height from going below 100px
     }
   };
 
+  // Stop resizing
   const stopResizing = () => {
     isDragging.current = false;
     document.removeEventListener("mousemove", resize);
     document.removeEventListener("mouseup", stopResizing);
   };
 
+  // Render terminal output
   const renderOutput = (text) => {
-    // Remove ANSI color codes using a regular expression for strings
+    // Remove ANSI color codes from the text (useful for cleaned text output)
     const cleanedText =
       typeof text === "string" ? text.replace(/\x1b\[[0-9;]*m/g, "") : text;
 
-    // If it's an array or object, stringify it with indentation
+    // If the text is an array or object, pretty-print it
     if (Array.isArray(cleanedText) || typeof cleanedText === "object") {
       return (
         <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
@@ -50,7 +55,7 @@ function Terminal({ output, setShowTerminal }) {
       );
     }
 
-    // If it's a URL, wrap it in an anchor tag for clickable output
+    // If the text is a string, check if it contains URLs and make them clickable
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (typeof cleanedText === "string") {
       return cleanedText.split(urlRegex).map((part, index) =>
@@ -70,7 +75,7 @@ function Terminal({ output, setShowTerminal }) {
       );
     }
 
-    // For simple values like numbers, booleans, or strings (without URLs)
+    // For other types (numbers, booleans, etc.), just return the value
     return cleanedText;
   };
 
@@ -122,7 +127,20 @@ function Terminal({ output, setShowTerminal }) {
             right: 0,
           }}
         />
-        <h4 style={{ margin: "0 0 10px 0", color: "#4CAF50" }}>Terminal</h4>
+
+        {/* Terminal Header */}
+        <h4
+          style={{
+            margin: "0 0 10px 0",
+            color: "#4CAF50",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          Terminal
+        </h4>
+
+        {/* Render Output */}
         <pre>{renderOutput(output || "Press Run to execute your code...")}</pre>
       </div>
     </div>
