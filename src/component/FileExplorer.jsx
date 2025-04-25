@@ -46,7 +46,7 @@ const FileExplorer = ({
 
   const deleteFile = (fileToDelete) => {
     setOpenFiles((prevFiles) =>
-      prevFiles.filter((file) => file !== fileToDelete)
+      prevFiles.includes(file) ? prevFiles : [...prevFiles, file]
     );
 
     setFileTree((prevTree) => {
