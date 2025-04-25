@@ -37,22 +37,41 @@ function Terminal({ output, setShowTerminal }) {
   };
 
   const renderOutput = (text) => {
+    // Remove ANSI color codes using a regular expression for strings
+    const cleanedText =
+      typeof text === "string" ? text.replace(/\x1b\[[0-9;]*m/g, "") : text;
+
+    // If it's an array or object, stringify it with indentation
+    if (Array.isArray(cleanedText) || typeof cleanedText === "object") {
+      return (
+        <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+          {JSON.stringify(cleanedText, null, 2)}
+        </pre>
+      );
+    }
+
+    // If it's a URL, wrap it in an anchor tag for clickable output
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.split(urlRegex).map((part, index) =>
-      part.match(urlRegex) ? (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "lightblue" }}
-        >
-          {part}
-        </a>
-      ) : (
-        part
-      )
-    );
+    if (typeof cleanedText === "string") {
+      return cleanedText.split(urlRegex).map((part, index) =>
+        part.match(urlRegex) ? (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "lightblue" }}
+          >
+            {part}
+          </a>
+        ) : (
+          part
+        )
+      );
+    }
+
+    // For simple values like numbers, booleans, or strings (without URLs)
+    return cleanedText;
   };
 
   return (
