@@ -1,11 +1,39 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🤖 AICODEMATE  
 
-Currently, two official plugins are available:
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)  
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)  
+![Made with MERN](https://img.shields.io/badge/Made%20with-MERN-red.svg)  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+AICODEMATE is a **collaborative coding platform** powered by the **MERN stack** and **AI integration**.  
+It allows developers to chat, code, collaborate, and leverage AI to generate, run, and review code in real time.  
 
+---
 
-project link : https://finalproject-frontend-six.vercel.app/login
+## ✨ Features  
+
+- 🔑 **Authentication** – Secure login & registration.  
+- 👥 **Collaboration** – Create projects & add collaborators.  
+- 💬 **Real-time Chat** – Chat with teammates instantly.  
+- 🤖 **AI Assistance (`@ai`)** – Generate or explain code directly in chat.  
+  - Example: `@ai generate server in express` → Creates `server.js`.  
+- 📂 **File Explorer** – Organize and manage project files.  
+- 📝 **Monaco Editor** – Powerful coding experience with syntax highlighting.  
+- ▶️ **Run Code** – Execute JavaScript and view results in a built-in terminal.  
+- 🔍 **AI Code Review** – Get instant feedback or explanations in a side panel.  
+- 🌍 **Deployment** – Backend on **Render**, frontend on **Vercel**.  
+
+---
+
+## 🛠️ Tech Stack  
+
+- **Frontend:** React, Vite, TailwindCSS, Monaco Editor  
+- **Backend:** Node.js, Express.js  
+- **Database:** MongoDB  
+- **Real-time:** Socket.IO  
+- **AI Integration:** OpenAI API  
+- **Deployment:** Render + Vercel  
+
+---
+
+project link : https://finalproject-frontend-six.vercel.app
