@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const { user } = useContext(UserContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projectName, setProjectName] = useState(null);
+  // FIX: Initialize with an empty string instead of null for controlled inputs
+  const [projectName, setProjectName] = useState("");
   const [project, setProject] = useState([]);
 
   const navigate = useNavigate();
@@ -22,11 +23,20 @@ const Home = () => {
       .then((res) => {
         console.log(res);
         setIsModalOpen(false);
+
+        // FIX: Update the state with the newly created project.
+        // Note: Depending on your backend, the new project might be in `res.data` or `res.data.project`.
+        // Adjust the variable below if your backend sends it differently!
+        const newProject = res.data.project || res.data;
+
+        setProject((prevProjects) => [...prevProjects, newProject]);
+        setProjectName(""); // Clear the input field for the next time the modal opens
       })
       .catch((error) => {
         console.log(error);
       });
   }
+
   function deleteProject(id, e) {
     e.stopPropagation(); // Prevent navigation when clicking delete
 
@@ -37,7 +47,7 @@ const Home = () => {
       .delete(`/projects/${id}`)
       .then((res) => {
         console.log(res);
-        setProject((prevProjects) => prevProjects.filter((p) => p._id !== id)); // Properly update the state
+        setProject((prevProjects) => prevProjects.filter((p) => p._id !== id));
       })
       .catch((error) => console.log(error));
   }
@@ -83,10 +93,10 @@ const Home = () => {
                 </small>{" "}
                 :
               </p>
-              {project.users.length}
+              {project.users ? project.users.length : 0}
             </div>
 
-            {/* DELETE BUTTON (Now correctly positioned inside the project card) */}
+            {/* DELETE BUTTON */}
             <button
               onClick={(e) => deleteProject(project._id, e)}
               style={{
