@@ -5,22 +5,23 @@ import { UserContext } from "../context/user.context";
 const UserAuth = ({ children }) => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      setLoading(false);
+    const token = localStorage.getItem("token");
+
+    // Check for missing token or user
+    if (!token || !user) {
+      navigate("/login");
+      // Note: We intentionally do NOT call setLoading(false) here.
+      // Keeping it true prevents the protected 'children' from flashing
+      // on the screen for a split second while React Router redirects.
+      return;
     }
 
-    if (!token) {
-      navigate("/login");
-    }
-
-    if (!user) {
-      navigate("/login");
-    }
-  }, []);
+    // Auth is valid: clear the loading state to render children
+    setLoading(false);
+  }, [user, navigate]); // FIX: Added missing dependency array
 
   if (loading) {
     return <div>Loading...</div>;
