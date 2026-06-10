@@ -18,7 +18,9 @@ const Project = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const { user } = useContext(UserContext);
-  const [messages, setMessages] = useState([]); // New state variable for messages
+  const [messages, setMessages] = useState([]);
+
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [project, setProject] = useState(location.state.project);
   const [selectedUserId, setSelectedUserId] = useState(new Set());
@@ -104,6 +106,7 @@ const Project = () => {
     // Attach WebSocket listeners
     receiveMessage("project-message", handleProjectMessage);
     receiveMessage("code-change", handleCodeChange);
+
     // Fetch project data
     axios
       .get(`/projects/get-project/${location.state.project._id}`)
@@ -128,8 +131,9 @@ const Project = () => {
     };
   }, []);
 
-  // Handle real-time code updates
-  const handleCodeChange = (fileName, newContent) => {
+  // FIX: Destructure the object parameter directly in the signature
+  // We alias `fileId` to `fileName` and `content` to `newContent`
+  const handleCodeChange = ({ fileId: fileName, content: newContent }) => {
     setFileTree((prevTree) => {
       if (prevTree[fileName]) {
         const updatedTree = {
@@ -144,7 +148,7 @@ const Project = () => {
         };
 
         // Save updated file tree to the database
-        saveFileTree(updatedTree); // Pass the updated tree to saveFileTree
+        saveFileTree(updatedTree);
         return updatedTree;
       }
       return prevTree;
@@ -183,6 +187,9 @@ const Project = () => {
           setFileTree={setFileTree}
           webContainer={webContainer}
           handleCodeChange={handleCodeChange}
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          code={selectedFile ? fileTree[selectedFile]?.file?.contents : ""}
         />
       </section>
 

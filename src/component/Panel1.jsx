@@ -7,7 +7,9 @@ import hljs from "highlight.js";
 const Panel1 = ({ setIsModalOpen, project, setMessages, messages, user }) => {
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const messageBox = React.createRef();
+
+  // FIX 1: Renamed the ref to clearly indicate it points to the end of the list
+  const messagesEndRef = useRef(null);
 
   function SyntaxHighlightedCode({ className, children }) {
     const ref = useRef(null);
@@ -25,10 +27,13 @@ const Panel1 = ({ setIsModalOpen, project, setMessages, messages, user }) => {
     );
   }
 
+  // FIX 2: Use scrollIntoView with a slight delay to allow Markdown to render
   useEffect(() => {
-    if (messageBox.current) {
-      messageBox.current.scrollTop = messageBox.current.scrollHeight;
-    }
+    const timeoutId = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [messages]);
 
   const send = () => {
@@ -39,6 +44,7 @@ const Panel1 = ({ setIsModalOpen, project, setMessages, messages, user }) => {
     setMessages((prevMessages) => [...prevMessages, { sender: user, message }]); // Update messages state
     setMessage("");
   };
+
   function WriteAiMessage(message) {
     let messageObject;
 
@@ -67,6 +73,7 @@ const Panel1 = ({ setIsModalOpen, project, setMessages, messages, user }) => {
       </div>
     );
   }
+
   return (
     <section className="left relative flex flex-col h-screen min-w-96 bg-slate-300">
       <header
@@ -92,17 +99,15 @@ const Panel1 = ({ setIsModalOpen, project, setMessages, messages, user }) => {
         }}
         className="conversation-area pt-14 pb-10 flex-grow flex flex-col h-full relative"
       >
-        <div
-          ref={messageBox}
-          className="message-box p-1 flex-grow flex flex-col gap-1 overflow-auto max-h-full scrollbar-hide"
-        >
+        {/* FIX 3: Removed the ref from the container itself */}
+        <div className="message-box p-1 flex-grow flex flex-col gap-1 overflow-auto max-h-full scrollbar-hide">
           {messages.map((msg, index) => (
             <div
               key={index}
               className={`${
                 msg.sender._id === "ai" ? "max-w-80" : "max-w-52"
               } ${
-                msg.sender._id == user._id.toString() && "ml-auto"
+                msg.sender._id === user._id.toString() && "ml-auto"
               }  message flex flex-col p-2 bg-slate-50 w-fit rounded-md`}
             >
               <small className="opacity-65 text-xs">{msg.sender.email}</small>
@@ -115,6 +120,8 @@ const Panel1 = ({ setIsModalOpen, project, setMessages, messages, user }) => {
               </div>
             </div>
           ))}
+          {/* FIX 4: The empty dummy div acting as the scroll anchor */}
+          <div ref={messagesEndRef} />
         </div>
 
         <div className="flex gap-2 p-1 absolute bottom-0 w-full">
